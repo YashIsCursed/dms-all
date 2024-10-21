@@ -8,60 +8,44 @@ const pool = await mysql.createPool({
 }).promise();
 
 export async function SelectUsers() {
-  try {
-    const [rows] = await pool.query("SELECT * FROM Users");
-    return rows;
-  } catch (error) {
-    console.error("Error selecting users:", error);
-    throw error;
-  }
+  const rows = await pool.query("SELECT * FROM Users");
+  return rows;
 }
 
 export async function SelectComments() {
-  try {
-    const [rows] = pool.query("SELECT * FROM Comments");
-    return rows;
-  } catch (error) {
-    console.error('error Selecting comments:', error);
-    throw error;
-  }
+  const rows = pool.query("SELECT * FROM Comments");
+  return rows;
+
 }
 
 export async function SelectConnection() {
-  try {
-    const [rows] = pool.query("SELECT * FROM Connections");
-    return rows;
-  } catch (error) {
-    console.error('error Selecting Connections:', error);
-    throw error;
-  }
+  const rows = pool.query("SELECT * FROM Connections");
+  return rows;
+
 }
 
 export async function SelectLikes() {
-  try {
-    const [rows] = pool.query("SELECT * FROM Likes");
-    return rows;
-  } catch (error) {
-    console.error('error Selecting Likes: ', error);
-    throw error;
-  }
+  const rows = pool.query("SELECT * FROM Likes");
+  return rows;
+
 }
 
 export async function SelectPosts() {
-  try {
-    const [rows] = await pool.query("SELECT * FROM Posts");
-    return rows;
-  } catch (error) {
-    console.error("Error selecting posts:", error);
-    throw error;
-  }
+  const rows = await pool.query("SELECT * FROM Posts");
+  return rows;
+
 }
 
 export async function InsertPost(postInfo) {
   try {
-
-    const query = "INSERT INTO Posts (post_id, post_text, post_image_url, post_location) VALUES (?,?,?,?)";
-    const values = [postInfo.post_id, postInfo.post_text, postInfo.post_image_url, postInfo.post_location];
+    const query =
+      "INSERT INTO Posts (post_id, post_text, post_image_url, post_location) VALUES (?,?,?,?)";
+    const values = [
+      postInfo.post_id,
+      postInfo.post_text,
+      postInfo.post_image_url,
+      postInfo.post_location,
+    ];
     const [result] = await pool.query(query, values);
     return result.insertId;
   } catch (error) {
@@ -70,9 +54,23 @@ export async function InsertPost(postInfo) {
   }
 }
 
-export async function SelectUser(id) {
+export async function SelectUserByUid(id) {
   try {
-    const [rows] = await pool.query('SELECT * FROM Users WHERE user_id > ?', [id]);
+    const [rows] = await pool.query("SELECT * FROM Users WHERE user_id = ?", [
+      id,
+    ]);
+    return rows;
+  } catch (error) {
+    console.error("Error selecting user:", error);
+    throw error;
+  }
+}
+
+export async function SelectUserByUName(name) {
+  try {
+    const [rows] = await pool.query("SELECT * FROM Users WHERE username = ?", [
+      name,
+    ]);
     return rows;
   } catch (error) {
     console.error("Error selecting user:", error);
@@ -81,15 +79,20 @@ export async function SelectUser(id) {
 }
 
 export async function getPostById(postId, userId) {
-  try {
-    const query = 'SELECT * FROM Posts WHERE post_id = ? AND user_id = ?';
-    const [posts] = await connection.execute(query, [postId, userId]);
-    if (posts.length === 0) {
-      return null;
-    }
-    return posts[0];
-  } catch (error) {
-    console.error('Error fetching post:', error);
-    throw error;
-  }
+  const [posts] = await pool.query(
+    "SELECT * FROM Posts WHERE post_id = ? AND user_id = ?",
+    [postId, userId],
+  );
+
+  return posts;
 }
+
+export async function countPostsOfUsers(user_id) {
+  const [rows] = await pool.query("SELECT count(*) FROM Posts WHERE user_id = ?", [user_id]);
+  return rows[0]['count(*)'];
+};
+
+export async function countFriends(user_id) {
+  const [rows] = await pool.query('SELECT count(*) FROM Connections WHERE user_id1 = ? OR user_id2= ?', [user_id,user_id]);
+  return rows[0]['count(*)'];
+};
