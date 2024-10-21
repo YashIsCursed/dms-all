@@ -95,7 +95,6 @@
 
 ###### Refrence
 
-1. [Dropdown in Markdown](https://dev.to/asyraf/how-to-add-dropdown-in-markdown-o78)
-2. [My Sql Npm](https://www.npmjs.com/package/mysql)
-3. [MySQL & Js connect](https://www.youtube.com/watch?v=Hej48pi_lOc)
-4. [MYSQL & HTML integration](https://www.youtube.com/watch?v=MDZC8VDZnV8)
+1. [My Sql Npm](https://www.npmjs.com/package/mysql)
+2. [MySQL & Js connect](https://www.youtube.com/watch?v=Hej48pi_lOc)
+3. [MYSQL & HTML integration](https://www.youtube.com/watch?v=MDZC8VDZnV8)
