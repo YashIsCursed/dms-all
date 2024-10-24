@@ -10,7 +10,9 @@ import {
   SelectUserByUName,
   SelectUsers,
   countPostsOfUsers,
-  countFriends
+  countFriends,
+  InsertUser,
+
 } from "./.database/db.mjs";
 dotenv.config();
 
@@ -73,7 +75,7 @@ app.get("/:username/posts", async (req, res) => {
   res.json({
     User: user.username,
     friends: (friends === 0) ? 'No Friends Bro' : friends,
-    totalPosts: (totalPosts === 0)? 'No Posts': totalPosts,
+    totalPosts: (totalPosts === 0) ? 'No Posts' : totalPosts,
     userPosts
   });
 })
@@ -117,12 +119,32 @@ app.get("/:username/friends", async (req, res) => {
 
   res.json({
     User: user.username,
-    totalPosts: (posts === 0)? 'No Posts': posts,
+    totalPosts: (posts === 0) ? 'No Posts' : posts,
     friends: (friends === 0) ? 'No Friends Bro' : friends,
 
   });
 });
 
+app.post("/new/user", async (req, res) => {
+  const BData = req.body;
+  if (BData.username==null||BData.email==null||BData.password_hash==null||BData.full_name==null) {
+    return res.status(400).send("Invalid Data")
+  }
+  const NewUser = [
+    BData.username,
+    BData.email,
+    BData.password_hash,
+    BData.full_name,
+    BData.dob,
+    BData.profile_pic,
+    BData.bio,
+    BData.location,
+    BData.web_url
+  ];
+  const [result] = await InsertUser(NewUser);
+  console.log(result);
+  res.json(result).status(202);
+})
 app.listen(5000, () => {
   console.log("Startserver at  localhost:5000");
 });

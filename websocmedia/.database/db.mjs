@@ -36,24 +36,6 @@ export async function SelectPosts() {
 
 }
 
-export async function InsertPost(postInfo) {
-  try {
-    const query =
-      "INSERT INTO Posts (post_id, post_text, post_image_url, post_location) VALUES (?,?,?,?)";
-    const values = [
-      postInfo.post_id,
-      postInfo.post_text,
-      postInfo.post_image_url,
-      postInfo.post_location,
-    ];
-    const [result] = await pool.query(query, values);
-    return result.insertId;
-  } catch (error) {
-    console.error("Error inserting post:", error);
-    throw error;
-  }
-}
-
 export async function SelectUserByUid(id) {
   try {
     const [rows] = await pool.query("SELECT * FROM Users WHERE user_id = ?", [
@@ -93,6 +75,47 @@ export async function countPostsOfUsers(user_id) {
 };
 
 export async function countFriends(user_id) {
-  const [rows] = await pool.query('SELECT count(*) FROM Connections WHERE user_id1 = ? OR user_id2= ?', [user_id,user_id]);
+  const [rows] = await pool.query('SELECT count(*) FROM Connections WHERE user_id1 = ? OR user_id2= ?', [user_id, user_id]);
   return rows[0]['count(*)'];
 };
+
+export async function InsertPost(postInfo) {
+  try {
+    const query =
+      "INSERT INTO Posts (post_id, post_text, post_image_url, post_location) VALUES (?,?,?,?)";
+    const values = [
+      postInfo.post_id,
+      postInfo.post_text,
+      postInfo.post_image_url,
+      postInfo.post_location,
+    ];
+    const [result] = await pool.query(query, values);
+    return result.insertId;
+  } catch (error) {
+    console.error("Error inserting post:", error);
+    throw error;
+  }
+}
+
+export async function InsertUser(
+  username,
+  email,
+  pass,
+  full_name,
+  dob,
+  profile_pic,
+  bio,
+  location,
+  web_url
+) {
+  /// CONDITIONS
+
+  {
+    if (username == null || email == null || pass == null || full_name == null) {
+      return " Username OR Email OR Full Name Must Not Be NUll";
+    }
+    const user_info = [username, email, pass, full_name, dob, profile_pic, bio, location, web_url];
+    const res = await pool.query("INSERT INTO Users (username,email,password_hash,full_name,date_of_birth,profile_picture_url,bio,location,website_url) VALUES(?,?,?,?,?,?,?,?,?);", user_info);
+    return res;
+  }
+}
